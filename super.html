@@ -1,247 +1,208 @@
 <!DOCTYPEhtml>
-<html
-      	<body onkeydown="keypress(event)" onkeyup="keyup(event)">
-		<div id="menu">
-			<input type='file' onchange="getImage(this);" />
-			<label for ="full">Fullscreen</label>
-			<input type="checkbox" id="full" class="check" onchange = "fullScreen(this);">
-		</div>
-		<canvas id = "canvas"></canvas>
-		<canvas id="3dCanvas"></body>
-</body>
+<html>
+	<h1>Press the up arrow to jump</h1>
+<h1 class='score'>score: 0</h1>
+<h1 class='lastScore'>Last score: 0</h1>
+<h1 class='lose'>You lose!</h1>
 </html>
 <style>
-    		*{
-			margin:0;
-			padding:0;
-		}
-		#menu{
-			position:fixed;
-			width:100vw;
-			height:4em;
-			background:rgba(0,0,0,0.5);
-			overflow:hidden;
-		}
-		#menu input{
-			height:5em;
-			margin-top:0;
-			float:left;
-			font-family: Helvetica;
-			padding-top:1.5em;
-			margin-left:1em;
-		}
-		.check{
-			width:2em;
-			height:3em;
-		}
-		label{
-			float:left;
-			height:4em;
-			line-height:4em;
-			font-family: Helvetica;
-		}
-		canvas{
-			margin-top:4em;
-		}
+	body
+  margin: 0
+  overflow: hidden
+  
+  h1
+    position: absolute
+    max-width: 150px
+    top: 0.5rem
+    left: 1.5rem
+    color: #fcba03
+    font-size: 1.25rem
+    text-shadow: 2px 2px rgba(0,0,0,.5)
+    font-family: Arial
+    
+    &.lastScore
+      left: calc(100vw - 10.8rem)
+      top: 2rem
+    
+    &.score
+      left: calc(100vw - 8rem)
+      
+    &.lose
+      top: 50%
+      left: 50%
+      transform: translate(-50%,-100%)
+      width: 100vw !important
+      max-width: 100vw
+      font-size: 5rem
+      text-align: center
+      opacity: 0
+      transition: opacity 0.2s ease-out
+      
+      &.show
+        opacity: 1
+  
+canvas
+  display: block
 </style>
 <script>
-    const map = [];
-			const canvas = document.getElementById("canvas");
-			const Canvas3D = document.getElementById("3dCanvas");
-			const ctx3D = Canvas3D.getContext("2d");
-			const ctx = canvas.getContext("2d");
-			const blockSize = 20;
-			let displayMinMap = true;
-			var mapWidth = 0;
-			var mapHeight = 0;
-			let imageLoaded = false;
-			let playerObj;
-			const keys = [];
-			const maxRays = 80;
-			const pov = 0.5;
-			const rayMaxLength = 300;
-			function Premap(){
-				map.length = 0;
-				loadMap(map,"http://i.imgur.com/kIANaMg.png");
-			}
-			function fullScreen(obj){
-				console.log(obj.checked);
-				if(obj.checked){
-					canvas.style.display = "none";
-					Canvas3D.width = window.innerWidth;
-					Canvas3D.height = window.innerHeight;
-					displayMinMap = false;
-				}
-				else{
-					canvas.style.display = "inline-block";
-					Canvas3D.width = 640;
-					Canvas3D.height = 360;
-					displayMinMap = true;
-				}
-			}
-			const loadMap = function(map, imageSource){
-				const image = new Image();
-				image.crossOrigin = "";
-				image.onload = function(){
-					imageLoaded = true;
-					let canvas = document.createElement("canvas");
-					let ct = canvas.getContext("2d");
-					ct.drawImage(image,0,0);
-					mapWidth = image.width;
-					mapHeight = image.height;
-					let data = ct.getImageData(0,0,image.width,image.height);
-					console.log(data);
-					let w = 0;
-					for(let i = 0; i < data.data.length; i += 4){
-						map.push(data.data[i] & 0x1);
-					}
-					doStuff();
-				}
-				image.src = imageSource;
-			}
-			const drawMap = function(map){
-				ctx.fillStyle = "black";
-				for(let i = 0; i < mapHeight; i++){
-					for(let j = 0; j < mapWidth; j++){
-							if(!map[j + i*mapWidth])
-								ctx.fillRect(j*blockSize,i*blockSize,blockSize,blockSize);
-						}
-				}
-			}
+	var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+camera.position.z = 10;
+camera.position.y = 2;
+var player = {
+  pos: new THREE.Vector3(0,2,10),
+  vel: new THREE.Vector3(0,0,0),
+  acc: new THREE.Vector3(0,0,0),
+  hit: false,
+  wantX: 0,
+  jumping: false
+}
+var panSpeed = 0.4;
 
-			function doStuff(){
-				playerObj = new Player();
-				Canvas3D.style.background = "lightgray";
-				Canvas3D.width = 640;
-				Canvas3D.height = 360;
-				resizeCanvas();
-				update();
-			}
-			function update(){
-				let ray = rays(playerObj,maxRays,pov,rayMaxLength);
-				ctx.clearRect(0,0,canvas.width,canvas.height);
-				playerObj.updatePosition();
-				drawWalls(ray);
-				if(displayMinMap){
-					drawMap(map);
-					drawRays(ray);
-					ctx.fillStyle = "red";
-					ctx.fillRect(playerObj.position[0],playerObj.position[1],10,10);
-					ctx.beginPath();
-					ctx.moveTo(playerObj.position[0] + 5,playerObj.position[1] + 5);
-					ctx.lineTo(playerObj.position[0] + 5 + (20 * Math.cos(Math.radians(playerObj.rotation))),playerObj.position[1] + 5 + (20 * Math.sin(Math.radians(playerObj.rotation))));
-					ctx.stroke();
-					ctx.closePath();
-				}
-				requestAnimationFrame(update);
-			}		
-			function resizeCanvas(){
-				canvas.width = mapWidth * blockSize;
-				canvas.height = mapHeight * blockSize;
-			}
-			Math.radians = function(degrees) {
-			  return degrees * Math.PI / 180;
-			};
-			const Player = function(){
-				this.position = [blockSize + 15,blockSize + 5];
-				this.speed = 1;
-				this.rotationSpeed = 2;
-				this.rotation = 0;
-				this.updatePosition = function(){
-					//left
-					if(keys[65])
-						this.rotation -= this.rotationSpeed;
-					//right
-					if(keys[68])
-						this.rotation += this.rotationSpeed;
-					//up
-					if(keys[87]){
-						let newPos = [this.position[0] + this.speed * Math.cos(Math.radians(playerObj.rotation)), this.position[1] + this.speed * Math.sin(Math.radians(playerObj.rotation))];
-						if(!Colliding(newPos))
-							this.position = newPos;
+var gravity = new THREE.Vector3(0,-0.1,0);
 
-					}
-					//down
-					if(keys[83]){
-						let newPos = [this.position[0] - this.speed * Math.cos(Math.radians(playerObj.rotation)), this.position[1] - this.speed * Math.sin(Math.radians(playerObj.rotation))];
-						if(!Colliding(newPos))
-						this.position = newPos;
-					}
-				}
-			}
-			function drawWalls(rays){
-				let ratio = Canvas3D.height / Canvas3D.width;
-				ctx3D.clearRect(0,0,Canvas3D.width,Canvas3D.height);
-				let strokeWidth = Canvas3D.width / rays.length;
-				for(let i = 0; i < rays.length; i++){
-					let strokeHeight = maxRays / rays[i][2];
-					let normLength = rays[i][2] / rayMaxLength;
-					//console.log("length: " + rays[i][2]);
-					ctx3D.fillStyle = "rgba(0,0,0," + (1 - normLength) + ")";
-					ctx3D.fillRect(i*strokeWidth,Canvas3D.height / 2 - (Canvas3D.height * (strokeHeight) * ratio) / 2, strokeWidth, Canvas3D.height * (strokeHeight) * ratio);
-				}
-					//ctx3D.fillRect(0,Canvas3D.height / 2 - (Canvas3D.height / 2) / 2,10,Canvas3D.height / 2);
-			}
-			function hypo(x,y){
-				return Math.sqrt(x*x + y*y);
-			}
-			function rays(player, amt,pov,rayLength){
-				var rays = [];
-				let rayPosition = [player.position[0] + 5,player.position[1] + 5];
-				let currentRayLength = 0;
-				for(let i = 0; i < amt; i++){
-					rayPosition = [player.position[0] + 5,player.position[1] + 5];
-					currentRayLength = 0; 
-					while(!rayCollision(rayPosition) && currentRayLength < rayLength){
-						currentRayLength ++;
-						rayPosition[0] = player.position[0] + 5 + (currentRayLength * Math.cos(Math.radians(player.rotation + (i*pov - (amt * pov)/2))));
-						rayPosition[1] = player.position[1] + 5 + (currentRayLength * Math.sin(Math.radians(player.rotation + (i*pov - (amt * pov)/2))));
-					}
-					rays.push(
-						[
-						player.position[0] + 5 + (currentRayLength * Math.cos(Math.radians(player.rotation + (i*pov - (amt * pov)/2)))),
-						player.position[1] + 5 + (currentRayLength * Math.sin(Math.radians(player.rotation + (i*pov - (amt * pov)/2)))),
-						player.position[2] = currentRayLength
-						]);
-				}
-				return rays;
-			}
-			function drawRays(rays){
+var renderer = new THREE.WebGLRenderer({antialias: true});
+scene.background = new THREE.Color('#001d45');
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-				for(let i = 0; i < rays.length; i++){
-					ctx.beginPath();
-					ctx.strokeStyle = "green";
-					ctx.moveTo(playerObj.position[0] + 5,playerObj.position[1] + 5);
-					ctx.lineTo(rays[i][0],rays[i][1]);
-					ctx.stroke();
-					ctx.closePath();
-				}
-			}
-			function Colliding(pos){
-				let posX = Math.floor(pos[0] / blockSize);
-				let posY = Math.floor(pos[1] / blockSize);
-				let widthPos = Math.floor((pos[0] + 10) / blockSize);
-				let heightPos = Math.floor((pos[1] + 10) / blockSize);
-				return (map[posX + posY*mapWidth] == 0 || map[widthPos + posY*mapWidth] == 0 || map[posX + heightPos*mapWidth] == 0|| map[widthPos + heightPos*mapWidth] == 0);
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
 
-			}
-			function rayCollision(pos){
-				let posX = Math.floor(pos[0] / blockSize);
-				let posY = Math.floor(pos[1] / blockSize);
-				if(pos[0] < 0 || pos[0] > canvas.width || pos[1] < 0 || pos[1] > canvas.height) return true;
-				return (map[posX + posY*mapWidth] == 0);
-			}
-			function keypress(event){
-				console.log(event.keyCode);
-				keys[event.keyCode] = true;
-			}
-			function keyup(event){
-				keys[event.keyCode] = false;
-			}
-			function getImage(input) {
-				map.length = 0;
-			    let src = URL.createObjectURL(event.target.files[0]);
-			    loadMap(map,src);
-			}	
-         Premap();
+var floorgeo = new THREE.BoxGeometry(30,0.5,500);
+var floormat = new THREE.MeshLambertMaterial({color: 0x0000aa});
+var floormesh = new THREE.Mesh(floorgeo,floormat);
+scene.add(floormesh);
+
+var ceilinggeo = new THREE.BoxGeometry(30,0.5,500);
+var ceilingmat = new THREE.MeshLambertMaterial({color: 0x0000aa});
+var ceilingmesh = new THREE.Mesh(ceilinggeo,ceilingmat);
+scene.add(ceilingmesh);
+ceilingmesh.position.y = 15;
+
+scene.fog = new THREE.Fog('#001d45',10,300);
+
+var cones = [];
+for (var i = 0; i < 1000; i++) {
+  let h = 5;
+  if (Math.random() <= 0.33) h = 10;
+  var geometry = new THREE.ConeGeometry( 3, h, 10 );
+  var material = new THREE.MeshBasicMaterial( {color: '#fcba03'} );
+  var cone = new THREE.Mesh( geometry, material );
+  cones.push(cone);
+  scene.add( cone );
+  cone.position.z = -i*30-30;
+  cone.originalZ = -i*30-30;
+  cone.h = h;
+  if (Math.random() <= 0.5) {
+    cone.position.y = 15;
+    cone.rotation.z = Math.PI;
+  }
+  let dirR = Math.random();
+  if (dirR <= .33) cone.position.x = -7.5;
+  if (dirR >= .66) cone.position.x = 7.5;
+}
+
+var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+scene.add( light );
+
+var light = new THREE.PointLight( 0xff0000, 1, 100 );
+light.position.set( 10, 7.5, player.pos.z );
+scene.add( light );
+
+var render = () => {
+  requestAnimationFrame(render);
+  
+  let dead = false;
+  for (var i = 0; i < cones.length; i++) {
+    cones[i].position.z += panSpeed;
+    
+    
+    let dist = player.pos.distanceTo(cones[i].position);
+    let size = 3;
+    if (cones[i].h > 5) size = 5;
+    if (Math.floor(dist) < size && !player.hit) {
+      dead = true;
+      panSpeed = 0.399;
+      $(".lastScore").html("Last score: "+Math.floor(cones[0].position.z+30))
+      $(".lose").addClass("show");
+      setTimeout(() => { $(".lose").removeClass("show"); },1000)
+    }
+  }
+  
+  panSpeed += 0.001;
+  
+  if (dead) {
+    player.hit = true;
+    setTimeout(() => { player.hit = false; },1000)
+    for (var i = 0; i < cones.length; i++) {
+      this.tl = new TimelineMax();
+      this.tl.to(cones[i].position,1,{z: cones[i].originalZ});
+    }
+  }
+  
+  player.acc.add(gravity);
+  
+  player.vel.add(player.acc);
+  player.pos.add(player.vel);
+  player.acc.set(0,0,0);
+  
+  if (player.wantX > player.pos.x) player.pos.x ++;
+  if (player.wantX < player.pos.x) player.pos.x --;
+  
+  if (player.pos.y >= 13 && camera.rotation.z !== 0 || player.pos.y <= 2 && camera.rotation.z == 0) {
+    player.jumping = false;
+    player.vel.y = 0;
+  }
+  
+  player.pos.clamp(new THREE.Vector3(-7.5,2,10),new THREE.Vector3(7.5,13,10));
+  
+  light.position.set( 10, 7.5, player.pos.z );
+  camera.position.set(player.pos.x,player.pos.y,player.pos.z);
+  
+  $(".score").html("Score: "+Math.floor(cones[0].position.z+30));
+  
+  renderer.render(scene,camera);
+}
+render();
+
+document.addEventListener('keyup', (e) => {
+  if (e.code === "ArrowUp") {
+    gravity.y *= -1;
+    player.vel.y = 0;
+    this.tl = new TimelineMax();
+    if (camera.rotation.z == 0) {
+      this.tl.to(camera.rotation,.2,{z: Math.PI});
+    } else {
+      this.tl.to(camera.rotation,.2,{z: Math.PI*2});
+      this.tl.to(camera.rotation,0,{z: 0});
+    }
+  }
+  if (camera.rotation.z == 0) {
+      if (e.code === "Space" && !player.jumping) {
+        player.jumping = true;
+        player.acc.y += 1.2;
+      }
+      if (e.code === "ArrowLeft") {
+      if (player.wantX >= 0) player.wantX -= 7.5;
+    }
+    if (e.code === "ArrowRight") {
+      if (player.wantX <= 0) player.wantX += 7.5;
+    }
+  } else {
+      if (e.code === "Space" && !player.jumping) {
+        player.jumping = true;
+        player.acc.y -= 1.2;
+      }
+      if (e.code === "ArrowRight") {
+      if (player.wantX >= 0) player.wantX -= 7.5;
+    }
+    if (e.code === "ArrowLeft") {
+      if (player.wantX <= 0) player.wantX += 7.5;
+    }
+  }
+});
 </script>
