@@ -29,6 +29,11 @@ h2 {
 	border: solid 3px #333;
 	box-sizing: content-box
 }
+.wall2 {
+	background: #fff;
+	border: solid 3px #333;
+	box-sizing: content-box
+}
 .actor {
 	position: absolute
 }
@@ -73,7 +78,7 @@ h2 {
    "                                                                 xx!xx                              x                                                           ",
    "                                   xxxxx                          xvx       o          o                                                                        ",
    "                                                                            xx         x=           0            x                                              ",
-   "  xx                                      o o                                x         x            x           =x                                              ",
+   "  xx              y                       o o                                x         x            x           =x                                              ",
    "  x                     o                                                    x         x=                        x                                              ",
    "  x                                      xxxxx                             o                        0                                                           ",
    "  x          xxxx       o                                                                           x                                            !o!            ",
@@ -124,9 +129,9 @@ h2 {
    "!!!!x x!!!!!!x         x!!!!!!xxxxxxxxx!!!!!!!!!!!!!!!!!!xx    !       x                                          ",
    "!!!!x x!!!!!!x         x!!!!!!xxxxxxxxx!!!!!!!!!!!!!!!!!!xx    !      x                                           ",
    "!!!!x x!!!!!!x         x!!!!!!xxxxxxxxx!!!!!!!!!!!!!!!!!!xx    !     x                                            ",
-   "                                                                    x                                             ",
-   "                                                                   x                                              ",
-   "                                                                  x                                               ",
+   "                               v                                    x                                             ",
+   "        v             v         v         v              v         x                                              ",
+   "            v     v        v                       v               x                                               ",
    "                                                               o x                                                ",
    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx                                                 "],
   ["                                                                                                              ",
@@ -282,6 +287,8 @@ function Level(plan) {
 				this.actors.push(new Actor(new Vector(x, y), ch));
 			else if (ch === "x")
 				fieldType = "wall";
+			else if (ch === "y")
+				fieldType = "wall2";
 			else if (ch === "!")
 				fieldType = "lava";
 			else if (ch === "|")
@@ -392,6 +399,8 @@ Level.prototype.obstacleAt = function(pos, size) {
 
   if (xStart < 0 || xEnd > this.width || yStart < 0)
     return "wall";
+  if (xStart < 0 || xEnd > this.width || yStart < 0)
+    return "wall2";
   if (yEnd > this.height)
     return "lava";
   for (var y = yStart; y < yEnd; y++) {
