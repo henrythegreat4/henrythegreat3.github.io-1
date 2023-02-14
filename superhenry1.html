@@ -29,6 +29,11 @@ h2 {
 	border: solid 3px #333;
 	box-sizing: content-box
 }
+.inviswall {
+	background: #222;
+	border: solid 3px #2223;
+	box-sizing: content-box
+}
 .wall2 {
 	background: #fff;
 	border: solid 3px #fff;
@@ -70,14 +75,14 @@ h2 {
    "                                                                                                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx            ",
    "                                                                                                                                                                ",
    "                                                                                                    o                                                           ",
-   "                                                                                                    x                                                           ",
-   "                                                                                                                                                                ",
-   "                  y   y                                            o                                o                                                           ",
-   "                    x                                             xxx                               x                                                           ",
-   "                 x  x  x                                         xx!xx                                                                                          ",
-   "                  xxxxx             o o                          x!!!x                              o                                                           ",
-   "                                                                 xx!xx                              x                                                           ",
-   "                                   xxxxx                          xvx       o          o                                                                        ",
+   "            IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII IIIIIIIIIIIIIIIIIIIIIIII        x                                                           ",
+   "           I                                                                                                                                                    ",
+   "          I       y   y                                            o                                o                                                           ",
+   "         I          x                                             xxx                               x                                                           ",
+   "        I        x  x  x                                         xx!xx                                                                                          ",
+   "       I          xxxxx             o o                          x!!!x                              o                                                           ",
+   "      I                                                          xx!xx                              x                                                           ",
+   "     I                             xxxxx                          xvx       o          o                                                                        ",
    "                                                                            xx         x=           0            x                                              ",
    "  xx                                      o o                                x         x            x           =x                                              ",
    "  x                     o                                                    x         x=                        x                                              ",
@@ -288,6 +293,8 @@ function Level(plan) {
 				this.actors.push(new Actor(new Vector(x, y), ch));
 			else if (ch === "x")
 				fieldType = "wall";
+			else if (ch === "I")
+				fieldType = "inviswall";
 			else if (ch === "y")
 				fieldType = "wall2";
 			else if (ch === "!")
@@ -402,6 +409,8 @@ Level.prototype.obstacleAt = function(pos, size) {
     return "wall";
   if (xStart < 0 || xEnd > this.width || yStart < 0)
     return "wall2";
+	if (xStart < 0 || xEnd > this.width || yStart < 0)
+    return "inviswall2";
   if (yEnd > this.height)
     return "lava";
   for (var y = yStart; y < yEnd; y++) {
