@@ -51,30 +51,30 @@ h2 {
 </style>
 <script>
 	var LEVELS = [
-  ["                                                                                ",
-   "                                                                                ",
-   "                                                                                ",
-   "                                                                                ",
-   "                                                                                ",
-   "                                                                                ",
-   "                                                                  xxx           ",
-   "                                                   xx      xx    xx!xx          ",
-   "                                    o o      xx                  x!!!x          ",
-   "                                                                 xx!xx          ",
-   "                                   xxxxx                          xvx           ",
-   "                                                                            xx  ",
-   "  xx                                      o o                                x  ",
-   "  x                     o                                                    x  ",
-   "  x                                      xxxxx                             o x  ",
-   "  x          xxxx       o                                                    x  ",
-   "  x  @       x  x                                                xxxxx       x  ",
-   "  xxxxxxxxxxxx  xxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxxxxx     xxxxxxx   xxxxxxxxx  ",
-   "                              x   x                  x     x                    ",
-   "                              x!!!x                  x!!!!!x                    ",
-   "                              x!!!x                  x!!!!!x                    ",
-   "                              xxxxx                  xxxxxxx                    ",
-   "                                                                                ",
-   "                                                                                "],
+  ["                                                                                                                                                                ",
+   "                                                                                                                                                                ",
+   "                                                                                                                                                                ",
+   "                                                                                                                                                                ",
+   "                                                                                                                                                                ",
+   "                                                                                                                                                                ",
+   "                                                                  xxx                                                                                           ",
+   "                                                   xx      xx    xx!xx                                                                                          ",
+   "                                    o o      xx                  x!!!x                                                                                          ",
+   "                                                                 xx!xx                              x                                                           ",
+   "                                   xxxxx                          xvx                                                                                           ",
+   "                                                                            xx         x=                        x                                              ",
+   "  xx                                      o o                                x         x            x           =x                                              ",
+   "  x                     o                                                    x         x=                        x                                              ",
+   "  x                                      xxxxx                             o                                                                                    ",
+   "  x          xxxx       o                                                                           x                                                           ",
+   "  x  @       x  x                                                xxxxx                                                                                          ",
+   "  xxxxxxxxxxxx  xxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxxxxx     xxxxxxx   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "                              x   x                  x     x                                                                                                    ",
+   "                              x!!!x                  x!!!!!x                                                                                                    ",
+   "                              x!!!x                  x!!!!!x                                                                                                    ",
+   "                              xxxxx                  xxxxxxx                                                                                                    ",
+   "                                                                                                                                                                ",
+   "                                                                                                                                                                "],
   ["                                      x!!x                        xxxxxxx                                    x!x  ",
    "                                      x!!x                     xxxx     xxxx                                 x!x  ",
    "                                      x!!xxxxxxxxxx           xx           xx                                x!x  ",
@@ -426,12 +426,12 @@ Coin.prototype.act = function(step) {
 
 
 var playerXSpeed = 10;
-
+var playerShrink = 0.1;
 Player.prototype.moveX = function(step, level, keys) {
   this.speed.x = 0;
   if (keys.left) this.speed.x -= playerXSpeed;
   if (keys.right) this.speed.x += playerXSpeed;
-
+  if (keys.shrink) this.size -= playerShrink;
   var motion = new Vector(this.speed.x * step, 0);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
@@ -492,7 +492,7 @@ Level.prototype.playerTouched = function(type, actor) {
   }
 };
 
-var arrowCodes = {37: "left", 38: "up", 39: "right"};
+var arrowCodes = {37: "left", 38: "up", 39: "right", 40: "shrink"};
 
 function trackKeys(codes) {
   var pressed = Object.create(null);
