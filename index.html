@@ -1,7 +1,7 @@
 <!DOCTYPEhtml>
 <html>
     <body>
-        <h1>The <h1 id= "flickr" game</h1> center</h1>
+        <h1>The <h1 id= "flickr"> game</h1> center</h1>
     <a href="./pong.html">pong</a>
     <a href="./super.html">the tale of Henry</a>
     <a href="">Visit W3Schools</a>
@@ -19,34 +19,24 @@ body{
   display:grid;
   place-content:center;
 }
-@keyframes flicker {
-  0%,
-  19%,
-  21%,
-  23%,
-  25%,
-  54%,
-  56%,
-  100% {
-    text-shadow: -0.2rem -0.2rem 1rem #fff, 0.2rem 0.2rem 1rem #fff,
-      0 0 12px rgb(255,255,255,0.8), 0 0 24px rgb(255,255,255,0.8),
-      0 0 36px rgb(255,255,255,0.8), 0 0 48px rgb(255,255,0.8),
-      0 0 60px rgb(255,255,255,0.8);
-
-    box-shadow: 0 0 3px #fff, inset 0 0 3px #fff,
-      0 0 12px  inset 0 0 2rem rgb(255,255,255,0.8),
-      0 0 24px rgb(255,255,255,0.8), inset 0 0 24px rgb(255,255,255,0.8);
+@keyframes flickr {
+  0% {
+     text-shadow: 0px 0px 20px cyan, 0px 0px 40px cyan, 0px 0px 60px cyan,0px 0px 80px cyan, 0px 0px 100px cyan;
   }
-
-  20%,
-  24%,
-  55% {
-    text-shadow: none;
-    box-shadow: none;
+  19% {
+     text-shadow: 0px 0px 15px cyan, 0px 0px 35px cyan, 0px 0px 55px cyan,0px 0px 70px cyan, 0px 0px 90px cyan;
   }
+  21%{
+     text-shadow: 0px 0px 10px cyan, 0px 0px 25px cyan, 0px 0px 35px cyan,0px 0px 60px cyan, 0px 0px 70px cyan;
+  }
+  23% {
+      text-shadow: 0px 0px 0px cyan, 0px 0px 0px cyan, 0px 0px 60px cyan,0px 0px 0px cyan, 0px 0px 0px cyan;
+  }
+ 
 }
 
 #flickr {
+   animation: flickr 1.4s infinite alternate;
   font-size:30px;
   letter-spacing: 6px;
   font-family: 'Rajdhani', sans-serif;
