@@ -190,9 +190,11 @@ function init() {
 
 
     // load the dino JSON model and start animating once complete
-  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-			const dinoObject = new THREE.Mesh( geometry, material );
+ loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/dino.json', function (geometry, materials) {
+
+
+        // Get the geometry and materials from the JSON
+        var dinoObject = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
 	
 	
         // Scale the size of the dino
