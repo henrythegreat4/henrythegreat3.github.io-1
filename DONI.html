@@ -84,7 +84,7 @@ var DINOSCALE = 20;                 // How big our dino is scaled to
 
 var clock;
 var dino;
-var loader = new THREE.JSONLoader();
+var loader = new THREE.GTLFLoader();
 var camera, controls, scene, renderer;
 var mapSize;
 
@@ -191,11 +191,13 @@ function init() {
 
 
     // load the dino JSON model and start animating once complete
-    loader.load('model.json', function (geometry, materials) {
-
+    loader.load('./model.gtlf', function ( gtlf ) {
+        
+	    
 
         // Get the geometry and materials from the JSON
-        var dinoObject = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+        var dinoObject = new THREE.Mesh( gtlf ));
+	    
 
         // Scale the size of the dino
         dinoObject.scale.set(DINOSCALE, DINOSCALE, DINOSCALE);
