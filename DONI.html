@@ -73,7 +73,7 @@
 		}
   </style>
 <script>
-  var UNITWIDTH = 90;                 // Width of a cubes in the maze
+ var UNITWIDTH = 90;                 // Width of a cubes in the maze
 var UNITHEIGHT = 4500;                // Height of the cubes in the maze
 var CATCHOFFSET = 120;              // Distance from the player the dino to trigger game over
 var DINOCOLLISIONDISTANCE = 55;     // How many units away a dino can get to a wall
@@ -84,7 +84,7 @@ var DINOSCALE = 20;                 // How big our dino is scaled to
 
 var clock;
 var dino;
-var loader = new THREE.GTLFLoader();
+var loader = new THREE.JSONLoader();
 var camera, controls, scene, renderer;
 var mapSize;
 
@@ -191,13 +191,11 @@ function init() {
 
 
     // load the dino JSON model and start animating once complete
-    loader.load('./model.gtlf', function ( gtlf ) {
-        
-	    
+    loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/dino.json', function (geometry, materials) {
+
 
         // Get the geometry and materials from the JSON
-        var dinoObject = new THREE.Mesh( gtlf ));
-	    
+        var dinoObject = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
 
         // Scale the size of the dino
         dinoObject.scale.set(DINOSCALE, DINOSCALE, DINOSCALE);
@@ -627,6 +625,7 @@ function degreesToRadians(degrees) {
 function radiansToDegrees(radians) {
     return radians * 180 / Math.PI;
 }
+
 
 
 </script>
