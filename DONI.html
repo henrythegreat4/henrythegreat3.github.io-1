@@ -191,12 +191,12 @@ function init() {
 
 
     // load the dino JSON model and start animating once complete
-    loader.load('model.gtlf', function ( gtlf ) {
+   loader.load('https://www.mediafire.com/file/ozqf5ki3ehzp1up/model.gltf/file', function (geometry, materials) {
 
 
         // Get the geometry and materials from the JSON
-        var dinoObject = scene.add( gltf.scene );
-
+        var dinoObject = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+	   
         // Scale the size of the dino
         dinoObject.scale.set(DINOSCALE, DINOSCALE, DINOSCALE);
         dinoObject.rotation.y = degreesToRadians(180);
