@@ -73,13 +73,14 @@
 		}
   </style>
 <script>
- var UNITWIDTH = 90;                 // Width of a cubes in the maze
-var UNITHEIGHT = 4500;                // Height of the cubes in the maze
+ 
+    var UNITWIDTH = 90;                 // Width of a cubes in the maze
+var UNITHEIGHT = 45;                // Height of the cubes in the maze
 var CATCHOFFSET = 120;              // Distance from the player the dino to trigger game over
 var DINOCOLLISIONDISTANCE = 55;     // How many units away a dino can get to a wall
 var PLAYERCOLLISIONDISTANCE = 20;   // How many units away the player can get from the wall
 var PLAYERSPEED = 800.0             // How fast the player moves
-var DINOSPEED = 600.0               // How fast the dino is moving
+var DINOSPEED = 400.0               // How fast the dino is moving
 var DINOSCALE = 20;                 // How big our dino is scaled to
 
 var clock;
@@ -157,7 +158,7 @@ function init() {
     scene = new THREE.Scene();
 
     // Add some fog for effects
-    scene.fog = new THREE.FogExp2(0x000, 0.0015);
+    scene.fog = new THREE.FogExp2(0xcccccc, 0.0015);
 
     // Set render settings
     renderer = new THREE.WebGLRenderer();
@@ -191,10 +192,12 @@ function init() {
 
 
     // load the dino JSON model and start animating once complete
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const dinoObject = new THREE.Mesh( geometry, material );
-	
+    loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/dino.json', function (geometry, materials) {
+
+
+        // Get the geometry and materials from the JSON
+        var dinoObject = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+
         // Scale the size of the dino
         dinoObject.scale.set(DINOSCALE, DINOSCALE, DINOSCALE);
         dinoObject.rotation.y = degreesToRadians(180);
@@ -289,11 +292,11 @@ function listenForPlayerMovement() {
 
 // Add lights to the scene
 function addLights() {
-    var lightOne = new THREE.DirectionalLight(0xff0000);
+    var lightOne = new THREE.DirectionalLight(0xffffff);
     lightOne.position.set(1, 1, 1);
     scene.add(lightOne);
 
-    var lightTwo = new THREE.DirectionalLight(0xff0000, .4);
+    var lightTwo = new THREE.DirectionalLight(0xffffff, .4);
     lightTwo.position.set(1, -1, -1);
     scene.add(lightTwo);
 }
@@ -462,7 +465,7 @@ function triggerChase() {
         // Game over when dino is the value of CATCHOFFSET units away from camera
         var distanceFrom = Math.round(dino.position.distanceTo(controls.getObject().position)) - CATCHOFFSET;
         // Alert and display distance between camera and dino
-        dinoAlert.innerHTML = "RUN DUMBASS: " + distanceFrom;
+        dinoAlert.innerHTML = "Dino has spotted you! Distance from you: " + distanceFrom;
         dinoAlert.style.display = '';
         return true;
         // Not in agro range, don't start distance countdown
@@ -623,6 +626,7 @@ function degreesToRadians(degrees) {
 function radiansToDegrees(radians) {
     return radians * 180 / Math.PI;
 }
+
 
 
 
