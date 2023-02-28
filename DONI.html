@@ -75,7 +75,7 @@
 <script>
  
     var UNITWIDTH = 90;                 // Width of a cubes in the maze
-var UNITHEIGHT = 45;                // Height of the cubes in the maze
+var UNITHEIGHT = 4500;                // Height of the cubes in the maze
 var CATCHOFFSET = 120;              // Distance from the player the dino to trigger game over
 var DINOCOLLISIONDISTANCE = 55;     // How many units away a dino can get to a wall
 var PLAYERCOLLISIONDISTANCE = 20;   // How many units away the player can get from the wall
@@ -158,7 +158,7 @@ function init() {
     scene = new THREE.Scene();
 
     // Add some fog for effects
-    scene.fog = new THREE.FogExp2(0xcccccc, 0.0015);
+    scene.fog = new THREE.FogExp2(0xff0000, 0.0030);
 
     // Set render settings
     renderer = new THREE.WebGLRenderer();
@@ -331,7 +331,7 @@ function createMazeCubes() {
     // wall details
     var cubeGeo = new THREE.BoxGeometry(UNITWIDTH, UNITHEIGHT, UNITWIDTH);
     var cubeMat = new THREE.MeshPhongMaterial({
-        color: 0x81cfe0,
+        color: 0xff0000,
     });
 
     // Keep cubes within boundry walls
@@ -369,7 +369,7 @@ function createMazeCubes() {
 function createGround() {
     // Create the ground geometry and material
     var groundGeo = new THREE.PlaneGeometry(mapSize, mapSize);
-    var groundMat = new THREE.MeshPhongMaterial({ color: 0xA0522D, side: THREE.DoubleSide, shading: THREE.FlatShading });
+    var groundMat = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, shading: THREE.FlatShading });
 
     // Create the ground and rotate it flat
     var ground = new THREE.Mesh(groundGeo, groundMat);
@@ -388,7 +388,7 @@ function createPerimWalls() {
     for (var i = 0; i < 2; i++) {
         var perimGeo = new THREE.PlaneGeometry(mapSize, UNITHEIGHT);
         // Make the material double sided
-        var perimMat = new THREE.MeshPhongMaterial({ color: 0x464646, side: THREE.DoubleSide });
+        var perimMat = new THREE.MeshPhongMaterial({ color: 0xff000, side: THREE.DoubleSide });
         // Make two walls
         var perimWallLR = new THREE.Mesh(perimGeo, perimMat);
         var perimWallFB = new THREE.Mesh(perimGeo, perimMat);
