@@ -4,6 +4,7 @@
 	<div id='container'></div>
 	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
 	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
+	  <script src="./gltfLoader.js"></script>
 	<div id="blocker">
 
 		<div id="instructions">
@@ -193,14 +194,19 @@ function init() {
 	
 	
 	
-loader.load('./free-wendigo-for-all/source/model.gltf', function  ( gltf ) => {
-    const model = gltf.scene;
-	    }
-    
-    model.position.setX(30);
-    model.position.setY(0);
-    model.position.setZ(-400);
-    
+
+  const loader = new GLTFLoader();
+
+loader.load( './free-wendigo-for-all/source/model.gltf', function ( gltf ) {
+
+	scene.add( gltf.scene );
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
+
    
 });
 
