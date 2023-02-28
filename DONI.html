@@ -191,6 +191,7 @@ function init() {
     createPerimWalls();
 
 
+loader.load('./free-wendigo-for-all/source/model.gltf', function ( gtlf ) {
     // load the dino JSON model and start animating once complete
     loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/dino.json', function (geometry, materials) {
 
