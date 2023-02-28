@@ -189,9 +189,36 @@ function init() {
     createGround();
     // Add perimeter walls that surround the maze
     createPerimWalls();
+	
+	
+	
+	
+loader.load('./free-wendigo-for-all/source/model.gltf', function  ( gltf ) => {
+    const model = gltf.scene;
+	    }
+    
+    model.position.setX(30);
+    model.position.setY(0);
+    model.position.setZ(-400);
+    
+   
+});
 
+	
+	
+	
+const loader = new GLTFLoader();
 
-loader.load('./free-wendigo-for-all/source/model.gltf', function ( gtlf ) {
+loader.load( './free-wendigo-for-all/source/model.gltf', function ( gltf ) {
+
+	scene.add( gltf.scene );
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+  var monster = new THREE.mesh( gltf.scene
+} );
+
     // load the dino JSON model and start animating once complete
     loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/dino.json', function (geometry, materials) {
 
