@@ -85,7 +85,7 @@ var DINOSCALE = 20;                 // How big our dino is scaled to
 
 var clock;
 var dino;
-var loader = new THREE.GLTFLoader();
+var loader1 = new THREE.GLTFLoader();
 var loader = new THREE.JSONLoader();
 var camera, controls, scene, renderer;
 var mapSize;
@@ -195,9 +195,9 @@ function init() {
 	
 	
 
-  const loader = new GLTFLoader();
 
-loader.load( './free-wendigo-for-all/source/model.gltf', function ( gltf ) {
+
+loader1.load( './free-wendigo-for-all/source/model.gltf', function ( gltf ) {
 
 	scene.add( gltf.scene );
 
