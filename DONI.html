@@ -158,7 +158,7 @@ function init() {
     scene = new THREE.Scene();
 
     // Add some fog for effects
-    scene.fog = new THREE.FogExp2(0x000, 0.0030);
+    scene.fog = new THREE.FogExp2(0x000, 0.0015);
 
     // Set render settings
     renderer = new THREE.WebGLRenderer();
@@ -292,11 +292,11 @@ function listenForPlayerMovement() {
 
 // Add lights to the scene
 function addLights() {
-    var lightOne = new THREE.DirectionalLight(0xffffff);
+    var lightOne = new THREE.DirectionalLight(0x000);
     lightOne.position.set(1, 1, 1);
     scene.add(lightOne);
 
-    var lightTwo = new THREE.DirectionalLight(0xffffff, .4);
+    var lightTwo = new THREE.DirectionalLight(0x000, .4);
     lightTwo.position.set(1, -1, -1);
     scene.add(lightTwo);
 }
@@ -388,7 +388,7 @@ function createPerimWalls() {
     for (var i = 0; i < 2; i++) {
         var perimGeo = new THREE.PlaneGeometry(mapSize, UNITHEIGHT);
         // Make the material double sided
-        var perimMat = new THREE.MeshPhongMaterial({ color: 0xff000, side: THREE.DoubleSide });
+        var perimMat = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
         // Make two walls
         var perimWallLR = new THREE.Mesh(perimGeo, perimMat);
         var perimWallFB = new THREE.Mesh(perimGeo, perimMat);
